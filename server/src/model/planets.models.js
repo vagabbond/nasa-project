@@ -38,7 +38,11 @@ const loadPlanets = () => {
  });
 };
 
+const getPlanets = () => {
+ return planets;
+};
 module.exports = {
+ getPlanets,
  loadPlanets,
  planets,
 };

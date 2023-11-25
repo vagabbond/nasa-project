@@ -21,12 +21,9 @@ const App = () => {
      pattern={resources.pattern}
     >
      {(anim) => (
-      console.log(anim),
-      (
-       <Router>
-        <AppLayout show={anim.entered} />
-       </Router>
-      )
+      <Router>
+       <AppLayout show={anim.entered} />
+      </Router>
      )}
     </Arwes>
    </SoundsProvider>
