@@ -1,20 +1,21 @@
 const {
  getLaunches,
- addNewLaunch,
  deleteLaunch,
  existsLaunchWithId,
+ scheduleNewLaunch,
 } = require("../../model/launches.model.js");
+const { getPagination } = require("../../query.js");
 const { getPlanets } = require("../../model/planets.models.js");
 
-const getAllLaunches = (req, res) => {
- return res.status(200).json(getLaunches());
+const getAllLaunches = async (req, res) => {
+ const { skip, limit } = getPagination(req.query);
+
+ return res.status(200).json(await getLaunches(skip, limit));
 };
-const postNewLaunch = (req, res) => {
+const postNewLaunch = async (req, res) => {
  const data = req.body;
- const planet = getPlanets().find(
-  (planet) => planet.kepler_name === data.target
- );
- console.log(planet);
+ const planets = await getPlanets();
+ const planet = planets.find((planet) => planet.keplerName === data.target);
 
  if (!data.mission || !data.rocket || !data.launchDate || !data.target) {
   return res.status(400).json({
@@ -32,18 +33,24 @@ const postNewLaunch = (req, res) => {
    error: "No matching planet found",
   });
  }
- const result = addNewLaunch(data);
+ const result = await scheduleNewLaunch(data);
  return res.status(201).json(result);
 };
 
-const abortLaunch = (req, res) => {
+const abortLaunch = async (req, res) => {
  const launchId = Number(req.params.id);
- if (!existsLaunchWithId(launchId)) {
+ const ifExistsLaunchWithId = await existsLaunchWithId(launchId);
+ if (!ifExistsLaunchWithId) {
   return res.status(404).json({
    error: "Launch not found",
   });
  }
- const result = deleteLaunch(launchId);
+ const result = await deleteLaunch(launchId);
+ if (!result) {
+  return res.status(400).json({
+   error: "Launch not aborted",
+  });
+ }
  return res.status(200).json(result);
 };
 

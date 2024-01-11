@@ -9,7 +9,8 @@
   "test": "echo \"Error: no test specified\" && exit 1",
   "server": " npm run dev --prefix server",
   "client": " npm start --prefix client",
-  "watch": "concurrently --kill-others \"npm run server\" \"npm run client\""
+  "watch": "concurrently --kill-others \"npm run server\" \"npm run client\"",
+  "build": "npm run build --prefix client && npm run server"
  },
  "keywords": [],
  "author": "",
